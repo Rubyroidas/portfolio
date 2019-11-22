@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { fromEvent } from 'rxjs';
-import { scan, filter } from 'rxjs/operators';
+import { fromEvent, merge, observable } from 'rxjs';
+import { scan, filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
 
+import config from './config';
+import Slide from './Slide';
 import './App.css';
 
-const slides = [
-    'Slide 1: Hi',
-    'Slide 2: Welcome!',
-    'Slide 3: End'
-];
+const slides = config.slides;
+const COLS = Math.max(...slides.map(row => row.length));
+const ROWS = slides.length;
 
-const Slide = (props) => (
-    <div className="slide">
-        <div>
-            {props.data}
-        </div>
-    </div>
-);
 const KEYS = {
     UP: 38,
     RIGHT: 39,
     LEFT: 37,
     DOWN: 40,
+};
+const KEY_MAP = {
+    [KEYS.UP]: [0, -1],
+    [KEYS.DOWN]: [0, 1],
+    [KEYS.LEFT]: [-1, 0],
+    [KEYS.RIGHT]: [1, 0],
 };
 
 /**
@@ -31,7 +30,7 @@ const KEYS = {
  * @param {function(value)} callback
  * @returns {Promise}
  */
-const tween = (from, to, ms, callback) => {
+const numberTween = (from, to, ms, callback) => {
     return new Promise(resolve => {
         let iterator = from;
         const startTime = Date.now();
@@ -49,53 +48,110 @@ const tween = (from, to, ms, callback) => {
     });
 }
 
-export default () => {
-    const [slide, setSlide] = useState(0);
-    const [moving, setMoving] = useState(false);
-    const [offsetY, setOffsetY] = useState(0);
-    const doMove = offset => {
-        setMoving(true);
-        const newSlide = slide + offset;
-        setSlide(newSlide);
-        tween(-slide * window.innerHeight, -newSlide * window.innerHeight, 300, setOffsetY)
-            .then(() => {
-                setMoving(false);
-            });
-    };
-    const handleKeyDown = event => {
-        const { code, keyCode } = event;
+const directionExtractor = ({ x, y }) => {
+    return [
+        x === 0 ? 0 : Math.sign(x),
+        y === 0 ? 0 : Math.sign(y)
+    ];
+};
+const mouseWheelExtractor = event => {
+    return directionExtractor({
+        x: event.deltaX,
+        y: event.deltaY,
+    });
+};
 
-        switch (keyCode) {
-            case KEYS.UP:
-                if (slide > 0) {
-                    doMove(-1);
-                }
-                break;
-            case KEYS.DOWN:
-                if (slide < slides.length - 1) {
-                    doMove(1);
-                }
-                break;
+export default () => {
+    const [slideCol, setSlideCol] = useState(config.startSlideCol);
+    const [slideRow, setSlideRow] = useState(config.startSlideRow);
+    const [moving, setMoving] = useState(false);
+    const [offsetX, setOffsetX] = useState(-config.startSlideCol * 100);
+    const [offsetY, setOffsetY] = useState(-config.startSlideRow * 100);
+    const doMove = (offsetX, offsetY) => {
+        if (offsetX !== 0) {
+            const newSlideCol = slideCol + offsetX;
+            const columnsCount = slides[slideRow].length;
+            if (!(newSlideCol >= 0 && newSlideCol < columnsCount) || !slides[slideRow][newSlideCol]) {
+                return;
+            }
+            setMoving(true);
+            setSlideCol(newSlideCol);
+            numberTween(-slideCol * 100, -newSlideCol * 100, config.transitionDuration, setOffsetX)
+                .then(() => {
+                    setMoving(false);
+                });
+        } else {
+            const newSlideRow = slideRow + offsetY;
+            if (!(newSlideRow >= 0 && newSlideRow < slides.length) || !slides[newSlideRow][slideCol]) {
+                return;
+            }
+            setMoving(true);
+            setSlideRow(newSlideRow);
+            numberTween(-slideRow * 100, -newSlideRow * 100, config.transitionDuration, setOffsetY)
+                .then(() => {
+                    setMoving(false);
+                });
         }
     };
 
     useEffect(() => {
-        const sub = fromEvent(document, 'keydown')
-            .pipe(
-                filter(() => !moving),
-                filter(event => [KEYS.UP, KEYS.DOWN].includes(event.keyCode)),
-            )
-            .subscribe(handleKeyDown);
+        const sub = merge(
+            fromEvent(document, 'keydown')
+                .pipe(
+                    filter(() => !moving),
+                    filter(event => Object.values(KEYS).includes(event.keyCode)),
+                    map(event => KEY_MAP[event.keyCode])
+                ),
+            fromEvent(document, 'wheel')
+                .pipe(
+                    filter(() => !moving),
+                    map(mouseWheelExtractor)
+            ),
+            fromEvent(document, 'touchstart')
+                // Switch to listen to touchmove to determine position
+                .pipe(
+                    switchMap(startEvent =>
+                        fromEvent(document, 'touchmove')
+                            .pipe(
+                                // Listen until "touchend" is fired
+                                takeUntil(fromEvent(document, 'touchend')),
+                                takeLast(1),
+                                // Output the pageX location
+                                map(event => ({
+                                    x: startEvent.touches[0].pageX - event.touches[0].pageX,
+                                    y: startEvent.touches[0].pageY - event.touches[0].pageY
+                                })),
+                                // Take the last output and filter it to output only swipes 
+                                // greater than the defined tolerance
+                                map(({ x, y }) => ({
+                                    x: Math.abs(x) >= config.swipeTolerance ? x : 0,
+                                    y: Math.abs(y) >= config.swipeTolerance ? y : 0,
+                                })),
+                                filter(() => !moving),
+                                map(directionExtractor),
+                            )
+                    )
+                )
+        )
+            .subscribe(offset => doMove(...offset));
         return () => {
             sub.unsubscribe();
         };
     });
 
     return <div className="slides" style={{
-        marginTop: `${offsetY}px`
+        marginLeft: `${offsetX}vw`,
+        marginTop: `${offsetY}vh`,
     }}>
-        {slides.map((slideData, id) =>
-            <Slide key={id} data={slideData} />)
+        {slides.map((slideRowData, rowId) =>
+            slideRowData.map((slideData, colId) =>
+                <Slide key={`${colId}-${rowId}`} data={slideData} col={colId} row={rowId}
+                    topExists={slides[rowId - 1] && slides[rowId - 1][colId]}
+                    bottomExists={slides[rowId + 1] && slides[rowId + 1][colId]}
+                    leftExists={slides[rowId][colId - 1]}
+                    rightExists={slides[rowId][colId + 1]}
+                />)
+        )
         }
     </div>;
 };

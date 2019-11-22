@@ -3,12 +3,12 @@ const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 
 module.exports = (_, {development}) => {
-    return {
+    const config = {
         // entry: './src/index.js',
-        // output: {
-        //     filename: 'main.js',
-        //     path: path.resolve(__dirname, 'dist'),
-        // },
+        output: {
+            filename: 'main.js',
+            path: path.resolve(__dirname, 'docs'),
+        },
         module: {
             rules: [
                 {
@@ -45,7 +45,6 @@ module.exports = (_, {development}) => {
                 },
             ]
         },
-        devtool: 'cheap-module-source-map',
         plugins: [
             new HtmlWebPackPlugin({
                 template: "./src/index.html",
@@ -55,8 +54,17 @@ module.exports = (_, {development}) => {
         ],
         devServer: {
             contentBase: path.resolve(__dirname, 'src'),
-            open: true,
+            open: 'http://localhost:9000/',
+            host: '0.0.0.0',
             port: 9000,
         }
+    };
+
+    if (development) {
+        config.devtool = 'cheap-module-source-map';
+    } else {
+        config.devtool = 'none';
     }
+
+    return config;
 };

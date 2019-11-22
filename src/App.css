@@ -6,6 +6,7 @@ html, body {
     font-family: Roboto, sans-serif;
     font-size: 2vmin;
     overflow: hidden;
+    user-select: none;
 }
 
 body {
@@ -37,17 +38,55 @@ a:hover {
     text-decoration: none;
 }
 
+.slides {
+    position: relative;
+}
+
 .slide {
     width: 100vw;
     height: 100vh;
     display: grid;
-    grid-template-rows: 1fr auto 1fr;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 14vmin 1fr [s] auto [e] 1fr 14vmin;
+    grid-template-columns: 14vmin 1fr [s] auto [e] 1fr 14vmin;
     overflow: hidden;
+    position: absolute;
 }
 
-.slide>div {
+.slide>div.content {
     display: inline-block;
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
+    grid-column: s / e;
+    grid-row: s / e;
+    font-size: 4vmin;
+    text-align: center;
+    padding: 1vmin;
+}
+
+.slide>div.arrow {
+    font-size: 10vmin;
+    display: inline-block;
+    color: #002c6e;
+}
+
+.slide>div.arrow.top {
+    grid-column: s / e;
+    grid-row: 1 / span 1;
+    place-self: start center;
+}
+
+.slide>div.arrow.bottom {
+    grid-column: s / e;
+    grid-row: 5 / span 1;
+    place-self: end center;
+}
+
+.slide>div.arrow.right {
+    grid-column: 5 / span 1;
+    grid-row: s / e;
+    place-self: center end;
+}
+
+.slide>div.arrow.left {
+    grid-column: 1 / span 1;
+    grid-row: s / e;
+    place-self: center start;
 }
