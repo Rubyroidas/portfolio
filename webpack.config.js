@@ -4,11 +4,6 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 
 module.exports = (_, {development}) => {
     const config = {
-        // entry: './src/index.js',
-        output: {
-            filename: 'main.js',
-            path: path.resolve(__dirname, 'docs'),
-        },
         module: {
             rules: [
                 {
