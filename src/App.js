@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { fromEvent, merge, observable } from 'rxjs';
+import React from 'react';
+import { fromEvent, merge } from 'rxjs';
 import { scan, filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
 
 import config from './config';
@@ -61,52 +61,71 @@ const mouseWheelExtractor = event => {
     });
 };
 
-export default () => {
-    const [slideCol, setSlideCol] = useState(config.startSlideCol);
-    const [slideRow, setSlideRow] = useState(config.startSlideRow);
-    const [moving, setMoving] = useState(false);
-    const [offsetX, setOffsetX] = useState(-config.startSlideCol * 100);
-    const [offsetY, setOffsetY] = useState(-config.startSlideRow * 100);
-    const doMove = (offsetX, offsetY) => {
-        if (offsetX !== 0) {
-            const newSlideCol = slideCol + offsetX;
-            const columnsCount = slides[slideRow].length;
-            if (!(newSlideCol >= 0 && newSlideCol < columnsCount) || !slides[slideRow][newSlideCol]) {
-                return;
-            }
-            setMoving(true);
-            setSlideCol(newSlideCol);
-            numberTween(-slideCol * 100, -newSlideCol * 100, config.transitionDuration, setOffsetX)
-                .then(() => {
-                    setMoving(false);
-                });
-        } else {
-            const newSlideRow = slideRow + offsetY;
-            if (!(newSlideRow >= 0 && newSlideRow < slides.length) || !slides[newSlideRow][slideCol]) {
-                return;
-            }
-            setMoving(true);
-            setSlideRow(newSlideRow);
-            numberTween(-slideRow * 100, -newSlideRow * 100, config.transitionDuration, setOffsetY)
-                .then(() => {
-                    setMoving(false);
-                });
-        }
-    };
+export default class App extends React.Component {
+    state = {
+        slideCol: config.startSlideCol,
+        slideRow: config.startSlideRow,
+        moving: false,
+        offsetX: -config.startSlideCol * 100,
+        offsetY: -config.startSlideRow * 10
+    }
 
-    useEffect(() => {
-        const sub = merge(
+    doMove(offsetX, offsetY) {
+        if (offsetX !== 0) {
+            const newSlideCol = this.state.slideCol + offsetX;
+            const columnsCount = slides[this.state.slideRow].length;
+            if (!(newSlideCol >= 0 && newSlideCol < columnsCount) || !slides[this.state.slideRow][newSlideCol]) {
+                return;
+            }
+            numberTween(-this.state.slideCol * 100, -newSlideCol * 100, config.transitionDuration, value => {
+                this.setState({
+                    offsetX: value
+                });
+            })
+                .then(() => {
+                    this.setState({
+                        moving: false
+                    });
+                });
+            this.setState({
+                moving: true,
+                slideCol: newSlideCol
+            });
+        } else {
+            const newSlideRow = this.state.slideRow + offsetY;
+            if (!(newSlideRow >= 0 && newSlideRow < slides.length) || !slides[newSlideRow][this.state.slideCol]) {
+                return;
+            }
+            numberTween(-this.state.slideRow * 100, -newSlideRow * 100, config.transitionDuration, value => {
+                this.setState({
+                    offsetY: value
+                });
+            })
+                .then(() => {
+                    this.setState({
+                        moving: false
+                    });
+                });
+            this.setState({
+                moving: true,
+                slideRow: newSlideRow
+            });
+        }
+    }
+
+    componentDidMount() {
+        this.sub = merge(
             fromEvent(document, 'keydown')
                 .pipe(
-                    filter(() => !moving),
+                    filter(() => !this.state.moving),
                     filter(event => Object.values(KEYS).includes(event.keyCode)),
                     map(event => KEY_MAP[event.keyCode])
                 ),
             fromEvent(document, 'wheel')
                 .pipe(
-                    filter(() => !moving),
+                    filter(() => !this.state.moving),
                     map(mouseWheelExtractor)
-            ),
+                ),
             fromEvent(document, 'touchstart')
                 // Switch to listen to touchmove to determine position
                 .pipe(
@@ -127,31 +146,34 @@ export default () => {
                                     x: Math.abs(x) >= config.swipeTolerance ? x : 0,
                                     y: Math.abs(y) >= config.swipeTolerance ? y : 0,
                                 })),
-                                filter(() => !moving),
+                                filter(() => !this.state.moving),
                                 map(directionExtractor),
                             )
                     )
                 )
         )
-            .subscribe(offset => doMove(...offset));
-        return () => {
-            sub.unsubscribe();
-        };
-    });
+            .subscribe(offset => this.doMove(...offset));
+    }
 
-    return <div className="slides" style={{
-        marginLeft: `${offsetX}vw`,
-        marginTop: `${offsetY}vh`,
-    }}>
-        {slides.map((slideRowData, rowId) =>
-            slideRowData.map((slideData, colId) =>
-                <Slide key={`${colId}-${rowId}`} data={slideData} col={colId} row={rowId}
-                    topExists={slides[rowId - 1] && slides[rowId - 1][colId]}
-                    bottomExists={slides[rowId + 1] && slides[rowId + 1][colId]}
-                    leftExists={slides[rowId][colId - 1]}
-                    rightExists={slides[rowId][colId + 1]}
-                />)
-        )
-        }
-    </div>;
-};
+    componentWillUnmount() {
+        this.sub.unsubscribe();
+    }
+
+    render() {
+        return <div className="slides" style={{
+            marginLeft: `${this.state.offsetX}vw`,
+            marginTop: `${this.state.offsetY}vh`,
+        }}>
+            {slides.map((slideRowData, rowId) =>
+                slideRowData.map((slideData, colId) =>
+                    <Slide key={`${colId}-${rowId}`} data={slideData} col={colId} row={rowId}
+                        topExists={slides[rowId - 1] && slides[rowId - 1][colId]}
+                        bottomExists={slides[rowId + 1] && slides[rowId + 1][colId]}
+                        leftExists={slides[rowId][colId - 1]}
+                        rightExists={slides[rowId][colId + 1]}
+                    />)
+            )
+            }
+        </div>;
+    }
+}
