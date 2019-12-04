@@ -7,8 +7,6 @@ import Slide from './Slide';
 import './App.css';
 
 const slides = config.slides;
-const COLS = Math.max(...slides.map(row => row.length));
-const ROWS = slides.length;
 
 const KEYS = {
     UP: 38,
