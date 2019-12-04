@@ -4,6 +4,7 @@ import { filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
 
 import config from './config';
 import Slide from './Slide';
+import {vw, vh} from './Utils';
 import './App.css';
 
 const slides = config.slides;
@@ -138,8 +139,8 @@ export default () => {
     }, []);
 
     return <div className="slides" style={{
-        marginLeft: `${offsetX}vw`,
-        marginTop: `${offsetY}vh`,
+        marginLeft: `${vw(offsetX)}px`,
+        marginTop: `${vh(offsetY)}px`,
     }}>
         {slides.map((slideRowData, rowId) =>
             slideRowData.map((slideData, colId) =>

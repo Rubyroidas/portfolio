@@ -4,7 +4,7 @@ html, body {
     padding: 0;
     margin: 0;
     font-family: Roboto, sans-serif;
-    font-size: 3vmin;
+    font-size: 3.6vmin;
     overflow: hidden;
     user-select: none;
 }
@@ -43,8 +43,6 @@ a:hover {
 }
 
 .slide {
-    width: 100vw;
-    height: 100vh;
     display: grid;
     grid-template-rows: 14vmin 1fr [s] auto [e] 1fr 14vmin;
     grid-template-columns: 14vmin 1fr [s] auto [e] 1fr 14vmin;
@@ -61,30 +59,26 @@ a:hover {
     padding: 1vmin;
 }
 
-.slide>div.arrow {
-    font-size: 10vmin;
-    display: inline-block;
-    color: #002c6e;
-}
-
 .slide>div.arrow.top {
     grid-column: s / e;
     grid-row: 1 / span 1;
     place-self: start center;
 }
-
 .slide>div.arrow.bottom {
     grid-column: s / e;
     grid-row: 5 / span 1;
     place-self: end center;
 }
-
 .slide>div.arrow.right {
     grid-column: 5 / span 1;
     grid-row: s / e;
     place-self: center end;
 }
-
+.slide>div.arrow.left {
+    grid-column: 1 / span 1;
+    grid-row: s / e;
+    place-self: center start;
+}
 a, a:hover, a:visited {
     color: #2767d2;
     text-decoration: none;
@@ -93,11 +87,6 @@ a:hover {
     text-decoration: underline;
 }
 
-.slide>div.arrow.left {
-    grid-column: 1 / span 1;
-    grid-row: s / e;
-    place-self: center start;
-}
 .slide>div.content * {
     text-align: left;
 }
