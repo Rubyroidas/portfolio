@@ -22,8 +22,7 @@ export default {
             <>
                 <h1>What I can do</h1>
                 <ul>
-                    <li>Make games using Phaser.js or PIXI.js<br/>
-                        Examples:
+                    <li>Make games using Phaser.js or PIXI.js
                         <ul>
                             <li><a href="https://lifestreet.com/resources/gallery/">At
                                 LifeStreet</a></li>
@@ -31,20 +30,31 @@ export default {
                                 Labs</a></li>
                         </ul>
                     </li>
-                    <li>Make web projects using React, Redux, MobX<br/>
-                        Examples:
+                    <li>Make web projects using React, Redux, MobX
                         <ul>
                             <li><a href="https://gitlab.com/denis-klyuev-portfolio/vape-uptown-front">Vape catalogue Front end part</a></li>
                         </ul>
                     </li>
                     <li>Setup CI</li>
                     <li>Make Docker images</li>
-                    <li>Make <b>npm</b> packages</li>
-                    <li>Make server side using Node.js<br/>
-                        Examples:
+                    <li>Make <b>npm</b> packages
+                        <ul>
+                            <li>
+                                <a href="https://www.npmjs.com/package/phaser-sprite-extractor">CLI tool to disassembly sprite sheets</a>
+                            </li>
+                        </ul></li>
+                    <li>Make server side using Node.js
                         <ul>
                             <li><a href="https://gitlab.com/denis-klyuev-portfolio/vape-uptown-back">Vape catalogue Back end part</a></li>
                             <li><a href="https://gitlab.com/denis-klyuev-portfolio/telegram-interactive-books-bot">AWS Lambda telegram bot</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        Also I write some stuff in C# from time to time
+                        <ul>
+                            <li>
+                                <a href="https://github.com/Rubyroidas/CharCountForArticy">Plugin for Articy Draft 3.0</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
