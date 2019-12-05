@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from '@emotion/styled';
 /** @jsx jsx */
 import {css, jsx, keyframes} from '@emotion/core';
 
@@ -7,24 +6,6 @@ const arrows = {
     bottom: {
         base: css`
             top: -2vmin;
-            
-            &:before {
-                top: 2vmin;
-            }
-        `,
-        keyframes: keyframes`
-            0% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(4vmin);
-            }
-        `,
-    },
-    top: {
-        base: css`
-            top: 2vmin;
 
             &:before {
                 top: 6vmin;
@@ -37,6 +18,24 @@ const arrows = {
             100% {
                 opacity: 0;
                 transform: translateY(-4vmin);
+            }
+        `,
+    },
+    top: {
+        base: css`
+            top: 2vmin;
+            
+            &:before {
+                top: 2vmin;
+            }
+        `,
+        keyframes: keyframes`
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(4vmin);
             }
         `,
     },

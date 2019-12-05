@@ -4,7 +4,7 @@ import { filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
 
 import config from './config';
 import Slide from './Slide';
-import {vw, vh} from './Utils';
+import {vw, vh, directionExtractor, mouseWheelExtractor, numberTween} from './Utils';
 import './App.css';
 
 const slides = config.slides;
@@ -22,49 +22,16 @@ const KEY_MAP = {
     [KEYS.RIGHT]: [1, 0],
 };
 
-/**
- * @param {number} from
- * @param {number} to
- * @param {number} ms
- * @param {function(value)} callback
- * @returns {Promise}
- */
-const numberTween = (from, to, ms, callback) => {
-    return new Promise(resolve => {
-        const startTime = Date.now();
-        const animate = () => {
-            const timeDiff = Date.now() - startTime;
-            if (timeDiff >= ms) {
-                callback(to);
-                resolve();
-            } else {
-                callback(timeDiff / ms * (to - from) + from);
-                requestAnimationFrame(animate);
-            }
-        };
-        requestAnimationFrame(animate);
-    });
-};
-
-const directionExtractor = ({ x, y }) => {
-    return [
-        x === 0 ? 0 : Math.sign(x),
-        y === 0 ? 0 : Math.sign(y)
-    ];
-};
-const mouseWheelExtractor = event => {
-    return directionExtractor({
-        x: event.deltaX,
-        y: event.deltaY,
-    });
-};
-
 export default () => {
     const slideCol = useRef(config.startSlideCol);
     const slideRow = useRef(config.startSlideRow);
     const [moving, setMoving] = useState(false);
     const [offsetX, setOffsetX] = useState(-config.startSlideCol * 100);
     const [offsetY, setOffsetY] = useState(-config.startSlideRow * 100);
+    const [viewport, setViewport] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight
+    });
 
     const doMove = (offsetX, offsetY) => {
         if (offsetX !== 0) {
@@ -92,8 +59,17 @@ export default () => {
             slideRow.current = newSlideRow;
         }
     };
+    const handleResize = () => {
+        setViewport({
+            width: window.innerWidth,
+            height: window.innerHeight
+        });
+    };
 
     useEffect(() => {
+        // viewport size
+        window.addEventListener('resize', handleResize);
+        // Rx
         const sub = merge(
             fromEvent(document, 'keydown')
                 .pipe(
@@ -135,6 +111,7 @@ export default () => {
             .subscribe(offset => doMove(...offset));
         return () => {
             sub.unsubscribe();
+            window.removeEventListener('resize', handleResize);
         };
     }, []);
 
@@ -149,6 +126,7 @@ export default () => {
                     bottomExists={slides[rowId + 1] && slides[rowId + 1][colId]}
                     leftExists={slides[rowId][colId - 1]}
                     rightExists={slides[rowId][colId + 1]}
+                    viewport={viewport}
                 />)
         )
         }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {vw, vh} from './Utils';
-import ScrollGesture from "./ScrollGesture";
+import ScrollGesture from './ScrollGesture';
 
 const Slide = (props) => {
     const { topExists, bottomExists, leftExists, rightExists } = props;
