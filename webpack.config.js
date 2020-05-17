@@ -49,8 +49,7 @@ module.exports = (_, {development}) => {
         ],
         devServer: {
             contentBase: path.resolve(__dirname, 'src'),
-            open: 'http://localhost:9000/',
-            host: '0.0.0.0',
+            open: true,
             port: 9000,
         }
     };

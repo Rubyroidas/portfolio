@@ -42,6 +42,9 @@ export default {
                             <li>
                                 <a href="https://www.npmjs.com/package/phaser-sprite-extractor">CLI tool to disassembly sprite sheets</a>
                             </li>
+                            <li>
+                                <a href="https://www.npmjs.com/package/game-css-grid">Game CSS Grid library</a>
+                            </li>
                         </ul></li>
                     <li>Make server side using Node.js
                         <ul>
