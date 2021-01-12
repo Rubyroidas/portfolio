@@ -1,6 +1,6 @@
 import React from 'react';
 /** @jsx jsx */
-import {css, jsx, keyframes} from '@emotion/core';
+import {css, jsx, keyframes} from '@emotion/react';
 
 const arrows = {
     bottom: {

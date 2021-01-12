@@ -2,7 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 
-module.exports = (_, {development}) => {
+module.exports = (_, {mode}) => {
+    const development = mode === 'development';
     const config = {
         module: {
             rules: [
@@ -32,8 +33,12 @@ module.exports = (_, {development}) => {
                         {
                             loader: 'html-loader',
                             options: {
-                                minimize: true,
-                                conservativeCollapse: false,
+                                minimize: {
+                                    conservativeCollapse: false,
+                                    minifyCSS: !development,
+                                    minifyJS: !development,
+                                    collapseWhitespace: !development,
+                                }
                             }
                         }
                     ]
