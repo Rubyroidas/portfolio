@@ -5,7 +5,7 @@ import { filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
 import config from './config';
 import Slide from './Slide';
 import {vw, vh, directionExtractor, mouseWheelExtractor, numberTween} from './Utils';
-import './App.css';
+import './App.scss';
 
 const slides = config.slides;
 
