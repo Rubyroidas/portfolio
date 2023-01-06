@@ -5,7 +5,8 @@ import { filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
 import config from './config';
 import Slide from './Slide';
 import {vw, vh, directionExtractor, mouseWheelExtractor, numberTween} from './Utils';
-import './App.scss';
+import styled from "@emotion/styled";
+// import './App.scss';
 
 const slides = config.slides;
 
@@ -21,6 +22,10 @@ const KEY_MAP = {
     [KEYS.LEFT]: [-1, 0],
     [KEYS.RIGHT]: [1, 0],
 };
+
+const SlidesWrapper = styled.div`
+  position: relative;
+`;
 
 export default () => {
     const slideCol = useRef(config.startSlideCol);
@@ -115,7 +120,7 @@ export default () => {
         };
     }, []);
 
-    return <div className="slides" style={{
+    return <SlidesWrapper style={{
         marginLeft: `${vw(offsetX)}px`,
         marginTop: `${vh(offsetY)}px`,
     }}>
@@ -130,5 +135,5 @@ export default () => {
                 />)
         )
         }
-    </div>;
+    </SlidesWrapper>;
 };

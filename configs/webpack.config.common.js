@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const {merge} = require('webpack-merge');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const devConfig = require('./webpack.config.dev');
 const prodConfig = require('./webpack.config.prod');
@@ -29,15 +28,9 @@ module.exports = (_, baseConfig) => {
                     use: 'html-loader'
                 },
                 {
-                    test: /\.(scss|css)$/,
-                    use: [
-                        development
-                            ? 'style-loader'
-                            : MiniCssExtractPlugin.loader,
-                        'css-loader',
-                        'sass-loader',
-                    ]
-                }
+                    test: /\.css$/i,
+                    use: ['style-loader', 'css-loader'],
+                },
             ],
         },
         plugins: [
@@ -46,9 +39,6 @@ module.exports = (_, baseConfig) => {
                 template: path.resolve(__dirname, '../src/index.html'),
                 inject: true,
                 filename: 'index.html',
-            }),
-            new MiniCssExtractPlugin({
-                filename: 'styles.css'
             }),
         ],
         resolve: {
