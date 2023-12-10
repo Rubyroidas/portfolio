@@ -11,7 +11,7 @@ export default {
             <>
                 <h1>Who am I?</h1>
                 <p>
-                    Hi, my name is <b>Denis Klyuev</b>. I live in <b>Kyiv</b>, the heart of <b>Ukraine</b>
+                    Hi, my name is <b>Denis Klyuev</b>. I live in <b>Ontario, Canada</b>
                 </p>
                 <p>
                     I am <b>JavaScript</b> lover, Frontend & Game developer
@@ -102,8 +102,8 @@ export default {
             <>
                 <h1>How to reach out to me</h1>
                 <ul>
-                    <li>By e-mail: <b>denis.klyuev [at] google mail</b></li>
-                    <li>By phone number: <a href="sms:+380982899146">+380982899146</a></li>
+                    <li>By e-mail: <b>denis.klyuev.ca [at] google mail</b></li>
+                    <li>By phone number: <a href="sms:+380982899146">+12267539968</a></li>
                     <li>By Telegram IM: <a href="https://t.me/denis_klyuev">denis_klyuev</a></li>
                     <li>By Skype: <a href="skype:denis.klyuev?chat">denis.klyuev</a></li>
                     <li>My LinkedIn profile: <a href="https://linkedin.com/in/denis-klyuev">denis-klyuev</a></li>
