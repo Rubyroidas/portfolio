@@ -1,8 +1,7 @@
-import React from 'react';
 import styled from '@emotion/styled';
-import {keyframes} from '@emotion/react';
+import {keyframes, type Keyframes} from '@emotion/react';
 
-const arrows = {
+const arrows: Record<string, {keyframes: Keyframes}> = {
     bottom: {
         keyframes: keyframes`
             0% {
@@ -27,7 +26,7 @@ const arrows = {
     },
 };
 
-const ArrowBaseBottom = styled.div`
+const ArrowBaseBottom = styled.div<{keyframes: Keyframes}>`
   display: inline-block;
   position: relative;
   width: 6vmin;
@@ -85,12 +84,14 @@ const Arrows = {
     `,
 };
 
-const ScrollGesture = props => {
+const ScrollGesture = (props: {type: keyof typeof Arrows}) => {
     const {type} = props;
     const Wrapper = Arrows[type];
 
     return (
-        <Wrapper keyframes={arrows[type].keyframes}/>
+        <Wrapper
+            keyframes={arrows[type].keyframes}
+        />
     );
 };
 

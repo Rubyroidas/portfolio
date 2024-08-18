@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fromEvent, merge } from 'rxjs';
 import { filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
+import styled from '@emotion/styled';
 
 import config from './config';
 import Slide from './Slide';
 import {vw, vh, directionExtractor, mouseWheelExtractor, numberTween} from './Utils';
-import styled from "@emotion/styled";
 // import './App.scss';
 
 const slides = config.slides;
@@ -38,7 +38,7 @@ export default () => {
         height: window.innerHeight
     });
 
-    const doMove = (offsetX, offsetY) => {
+    const doMove = (offsetX: number, offsetY: number) => {
         if (offsetX !== 0) {
             const newSlideCol = slideCol.current + offsetX;
             const columnsCount = slides[slideRow.current].length;
@@ -76,22 +76,22 @@ export default () => {
         window.addEventListener('resize', handleResize);
         // Rx
         const sub = merge(
-            fromEvent(document, 'keydown')
+            fromEvent<KeyboardEvent>(document, 'keydown')
                 .pipe(
                     filter(() => !moving),
                     filter(event => Object.values(KEYS).includes(event.keyCode)),
                     map(event => KEY_MAP[event.keyCode])
                 ),
-            fromEvent(document, 'wheel')
+            fromEvent<WheelEvent>(document, 'wheel')
                 .pipe(
                     filter(() => !moving),
                     map(mouseWheelExtractor)
                 ),
-            fromEvent(document, 'touchstart')
+            fromEvent<TouchEvent>(document, 'touchstart')
                 // Switch to listen to touchmove to determine position
                 .pipe(
-                    switchMap(startEvent =>
-                        fromEvent(document, 'touchmove')
+                    switchMap((startEvent: TouchEvent) =>
+                        fromEvent<TouchEvent>(document, 'touchmove')
                             .pipe(
                                 // Listen until "touchend" is fired
                                 takeUntil(fromEvent(document, 'touchend')),
@@ -113,7 +113,7 @@ export default () => {
                     )
                 )
         )
-            .subscribe(offset => doMove(...offset));
+            .subscribe(offset => doMove(offset[0], offset[1]));
         return () => {
             sub.unsubscribe();
             window.removeEventListener('resize', handleResize);
@@ -127,11 +127,11 @@ export default () => {
         {slides.map((slideRowData, rowId) =>
             slideRowData.map((slideData, colId) =>
                 <Slide key={`${colId}-${rowId}`} data={slideData} col={colId} row={rowId}
-                    topExists={slides[rowId - 1] && slides[rowId - 1][colId]}
-                    bottomExists={slides[rowId + 1] && slides[rowId + 1][colId]}
-                    leftExists={slides[rowId][colId - 1]}
-                    rightExists={slides[rowId][colId + 1]}
-                    viewport={viewport}
+                       topExists={!!(slides[rowId - 1] && slides[rowId - 1][colId])}
+                       bottomExists={!!(slides[rowId + 1] && slides[rowId + 1][colId])}
+                       leftExists={!!(slides[rowId][colId - 1])}
+                       rightExists={!!(slides[rowId][colId + 1])}
+                       viewport={viewport}
                 />)
         )
         }

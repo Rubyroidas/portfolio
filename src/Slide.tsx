@@ -1,10 +1,10 @@
-import React from 'react';
+import {ReactNode} from 'react';
 import styled from '@emotion/styled';
 
 import {vw, vh} from './Utils';
 import ScrollGesture from './ScrollGesture';
 
-const SlideWrapper = styled.div`
+const SlideWrapper = styled.div<{col: number, row: number}>`
   display: grid;
   grid-template-rows: 14vmin 1fr [s] auto [e] 1fr 14vmin;
   grid-template-columns: 14vmin 1fr [s] auto [e] 1fr 14vmin;
@@ -42,7 +42,21 @@ const Content = styled.div`
   }
 `;
 
-const Slide = (props) => {
+type SlideProps = {
+    topExists: boolean;
+    bottomExists: boolean;
+    leftExists: boolean;
+    rightExists: boolean;
+    col: number;
+    row: number;
+    data: ReactNode;
+    viewport: {
+        width: number;
+        height: number;
+    }
+}
+
+const Slide = (props: SlideProps) => {
     const { topExists, bottomExists, leftExists, rightExists } = props;
 
     return (<SlideWrapper col={props.col} row={props.row}>

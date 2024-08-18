@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default {
     transitionDuration: 200,
     startSlideCol: 0,
