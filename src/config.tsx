@@ -1,4 +1,4 @@
-export default {
+export const config = {
     transitionDuration: 200,
     startSlideCol: 0,
     startSlideRow: 0,

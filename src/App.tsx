@@ -3,10 +3,9 @@ import { fromEvent, merge } from 'rxjs';
 import { filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
 import styled from '@emotion/styled';
 
-import config from './config';
-import Slide from './Slide';
+import {config} from './config';
+import {Slide} from './Slide';
 import {vw, vh, directionExtractor, mouseWheelExtractor, numberTween} from './Utils';
-// import './App.scss';
 
 const slides = config.slides;
 
@@ -27,7 +26,7 @@ const SlidesWrapper = styled.div`
   position: relative;
 `;
 
-export default () => {
+export const App = () => {
     const slideCol = useRef(config.startSlideCol);
     const slideRow = useRef(config.startSlideRow);
     const [moving, setMoving] = useState(false);

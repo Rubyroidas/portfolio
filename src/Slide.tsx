@@ -2,7 +2,7 @@ import {ReactNode} from 'react';
 import styled from '@emotion/styled';
 
 import {vw, vh} from './Utils';
-import ScrollGesture from './ScrollGesture';
+import {ScrollGesture} from './ScrollGesture';
 
 const SlideWrapper = styled.div<{col: number, row: number}>`
   display: grid;
@@ -56,7 +56,7 @@ type SlideProps = {
     }
 }
 
-const Slide = (props: SlideProps) => {
+export const Slide = (props: SlideProps) => {
     const { topExists, bottomExists, leftExists, rightExists } = props;
 
     return (<SlideWrapper col={props.col} row={props.row}>
@@ -70,5 +70,3 @@ const Slide = (props: SlideProps) => {
         </SlideWrapper>
     );
 };
-
-export default Slide;

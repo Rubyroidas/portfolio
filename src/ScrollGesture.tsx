@@ -84,7 +84,7 @@ const Arrows = {
     `,
 };
 
-const ScrollGesture = (props: {type: keyof typeof Arrows}) => {
+export const ScrollGesture = (props: {type: keyof typeof Arrows}) => {
     const {type} = props;
     const Wrapper = Arrows[type];
 
@@ -94,5 +94,3 @@ const ScrollGesture = (props: {type: keyof typeof Arrows}) => {
         />
     );
 };
-
-export default ScrollGesture;
