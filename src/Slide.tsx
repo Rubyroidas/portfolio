@@ -1,5 +1,5 @@
-import {ReactNode} from 'react';
-import styled from '@emotion/styled';
+import {Component} from 'solid-js';
+import {styled} from 'solid-styled-components';
 
 import {vw, vh} from './Utils';
 import {ScrollGesture} from './ScrollGesture';
@@ -49,7 +49,7 @@ type SlideProps = {
     rightExists: boolean;
     col: number;
     row: number;
-    data: ReactNode;
+    data: Component;
     viewport: {
         width: number;
         height: number;

@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import {keyframes, type Keyframes} from '@emotion/react';
+import { styled, keyframes } from "solid-styled-components";
 
+type Keyframes = ReturnType<typeof keyframes>;
 const arrows: Record<string, {keyframes: Keyframes}> = {
     bottom: {
         keyframes: keyframes`
