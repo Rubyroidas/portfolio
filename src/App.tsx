@@ -1,6 +1,6 @@
 import { type Component, createSignal, onCleanup } from 'solid-js';
 import { fromEvent, merge } from 'rxjs';
-import { filter, map, switchMap, takeUntil, takeLast } from 'rxjs/operators';
+import { filter, map, switchMap, takeUntil, takeLast, throttleTime } from 'rxjs/operators';
 import { styled } from 'solid-styled-components';
 
 import {config} from './config';
@@ -83,6 +83,7 @@ export const App: Component = () => {
         fromEvent<WheelEvent>(document, 'wheel')
             .pipe(
                 filter(() => !getMoving()),
+                throttleTime(config.wheelCooldown, undefined, { leading: true, trailing: false }),
                 map(mouseWheelExtractor)
             ),
         fromEvent<TouchEvent>(document, 'touchstart')

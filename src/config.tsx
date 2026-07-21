@@ -1,5 +1,8 @@
 export const config = {
     transitionDuration: 200,
+    // minimum time between wheel-triggered moves, to swallow trailing
+    // wheel/trackpad events from the same physical scroll gesture
+    wheelCooldown: 600,
     startSlideCol: 0,
     startSlideRow: 0,
     // swipe distance in pixels
